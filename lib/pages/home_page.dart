@@ -5,6 +5,7 @@ import 'package:flutter_komik/pages/detail_page.dart';
 import 'package:flutter_komik/pages/filter_page.dart';
 import 'package:flutter_komik/repository/comic_repo.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shimmer/shimmer.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -26,168 +27,292 @@ class HomePage extends StatelessWidget {
         body: BlocBuilder<TopComicBloc, TopComicState>(
           builder: (context, state) {
             if (state is TopComicLoading) {
-              return const CircularProgressIndicator();
+              return const HomeShimmerLoading();
             } else if (state is TopComicLoaded) {
-              return ListView(
-                children: [
-                  const SizedBox(height: 10),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: TitleAndSeeMore(
-                      titleText: "Top Manga",
-                      titleFilterPage: "Manga",
+              return RefreshIndicator(
+                backgroundColor: Colors.black,
+                color: Colors.blue,
+                displacement: 50,
+                onRefresh: () async {
+                  context.read<TopComicBloc>().add(GetTopManga(query: "manga"));
+                  context
+                      .read<TopComicBloc>()
+                      .add(GetTopManhwa(query: "manhwa"));
+                  context
+                      .read<TopComicBloc>()
+                      .add(GetTopManhua(query: "manhua"));
+                  context.read<TopComicBloc>().add(GetTopNovel(query: "novel"));
+                  context
+                      .read<TopComicBloc>()
+                      .add(GetTopLightNovel(query: "lightnovel"));
+                },
+                child: ListView(
+                  children: [
+                    const SizedBox(height: 10),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: TitleAndSeeMore(
+                        titleText: "Top Manga",
+                        titleFilterPage: "Manga",
+                      ),
                     ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    width: MediaQuery.of(context).size.width,
-                    height: 255,
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      physics: const ScrollPhysics(),
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) {
-                        final manga = state.manga[index];
-                        return InkWell(
-                            borderRadius: BorderRadius.circular(10),
-                            onTap: () =>
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) =>
-                                      DetailPage(id: manga.malId),
-                                )),
-                            child: ComicCard(comic: manga));
-                      },
-                      itemCount: state.manga.length,
+                    (state.manga.isEmpty)
+                        ? const CardShimmerLoading()
+                        : Container(
+                            padding: const EdgeInsets.all(10),
+                            width: MediaQuery.of(context).size.width,
+                            height: 255,
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (context, index) {
+                                final manga = state.manga[index];
+                                return InkWell(
+                                    borderRadius: BorderRadius.circular(10),
+                                    onTap: () => Navigator.of(context)
+                                            .push(MaterialPageRoute(
+                                          builder: (context) =>
+                                              DetailPage(id: manga.malId),
+                                        )),
+                                    child: ComicCard(comic: manga));
+                              },
+                              itemCount: state.manga.length,
+                            ),
+                          ),
+                    const SizedBox(height: 10),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: TitleAndSeeMore(
+                        titleText: "Top Manhwa",
+                        titleFilterPage: "Manhwa",
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: TitleAndSeeMore(
-                      titleText: "Top Manhwa",
-                      titleFilterPage: "Manhwa",
+                    (state.manhwa.isEmpty)
+                        ? const CardShimmerLoading()
+                        : Container(
+                            padding: const EdgeInsets.all(10),
+                            width: MediaQuery.of(context).size.width,
+                            height: 255,
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (context, index) {
+                                final manhwa = state.manhwa[index];
+                                return InkWell(
+                                    borderRadius: BorderRadius.circular(10),
+                                    onTap: () => Navigator.of(context)
+                                            .push(MaterialPageRoute(
+                                          builder: (context) =>
+                                              DetailPage(id: manhwa.malId),
+                                        )),
+                                    child: ComicCard(comic: manhwa));
+                              },
+                              itemCount: state.manhwa.length,
+                            ),
+                          ),
+                    const SizedBox(height: 10),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: TitleAndSeeMore(
+                        titleText: "Top Manhua",
+                        titleFilterPage: "Manhua",
+                      ),
                     ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    width: MediaQuery.of(context).size.width,
-                    height: 255,
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      physics: const ScrollPhysics(),
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) {
-                        final manhwa = state.manhwa[index];
-                        return InkWell(
-                            borderRadius: BorderRadius.circular(10),
-                            onTap: () =>
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) =>
-                                      DetailPage(id: manhwa.malId),
-                                )),
-                            child: ComicCard(comic: manhwa));
-                      },
-                      itemCount: state.manhwa.length,
+                    (state.manhua.isEmpty)
+                        ? const CardShimmerLoading()
+                        : Container(
+                            padding: const EdgeInsets.all(10),
+                            width: MediaQuery.of(context).size.width,
+                            height: 255,
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (context, index) {
+                                final manhua = state.manhua[index];
+                                return InkWell(
+                                    borderRadius: BorderRadius.circular(10),
+                                    onTap: () => Navigator.of(context)
+                                            .push(MaterialPageRoute(
+                                          builder: (context) =>
+                                              DetailPage(id: manhua.malId),
+                                        )),
+                                    child: ComicCard(comic: manhua));
+                              },
+                              itemCount: state.manhua.length,
+                            ),
+                          ),
+                    const SizedBox(height: 10),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: TitleAndSeeMore(
+                        titleText: "Top Novel",
+                        titleFilterPage: "Novel",
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: TitleAndSeeMore(
-                      titleText: "Top Manhua",
-                      titleFilterPage: "Manhua",
+                    (state.novel.isEmpty)
+                        ? const CardShimmerLoading()
+                        : Container(
+                            padding: const EdgeInsets.all(10),
+                            width: MediaQuery.of(context).size.width,
+                            height: 255,
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (context, index) {
+                                final novel = state.novel[index];
+                                return InkWell(
+                                    borderRadius: BorderRadius.circular(10),
+                                    onTap: () => Navigator.of(context)
+                                            .push(MaterialPageRoute(
+                                          builder: (context) =>
+                                              DetailPage(id: novel.malId),
+                                        )),
+                                    child: ComicCard(comic: novel));
+                              },
+                              itemCount: state.novel.length,
+                            ),
+                          ),
+                    const SizedBox(height: 10),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: TitleAndSeeMore(
+                        titleText: "Top LightNovel",
+                        titleFilterPage: "LightNovel",
+                      ),
                     ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    width: MediaQuery.of(context).size.width,
-                    height: 255,
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      physics: const ScrollPhysics(),
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) {
-                        final manhua = state.manhua[index];
-                        return InkWell(
-                            borderRadius: BorderRadius.circular(10),
-                            onTap: () =>
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) =>
-                                      DetailPage(id: manhua.malId),
-                                )),
-                            child: ComicCard(comic: manhua));
-                      },
-                      itemCount: state.manhua.length,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: TitleAndSeeMore(
-                      titleText: "Top Novel",
-                      titleFilterPage: "Novel",
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    width: MediaQuery.of(context).size.width,
-                    height: 255,
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      physics: const ScrollPhysics(),
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) {
-                        final novel = state.novel[index];
-                        return InkWell(
-                            borderRadius: BorderRadius.circular(10),
-                            onTap: () =>
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) =>
-                                      DetailPage(id: novel.malId),
-                                )),
-                            child: ComicCard(comic: novel));
-                      },
-                      itemCount: state.novel.length,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: TitleAndSeeMore(
-                      titleText: "Top LightNovel",
-                      titleFilterPage: "LightNovel",
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    width: MediaQuery.of(context).size.width,
-                    height: 255,
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      physics: const ScrollPhysics(),
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) {
-                        final lightNovel = state.lightNovel[index];
-                        return InkWell(
-                            borderRadius: BorderRadius.circular(10),
-                            onTap: () =>
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) =>
-                                      DetailPage(id: lightNovel.malId),
-                                )),
-                            child: ComicCard(comic: lightNovel));
-                      },
-                      itemCount: state.lightNovel.length,
-                    ),
-                  ),
-                ],
+                    (state.lightNovel.isEmpty)
+                        ? const CardShimmerLoading()
+                        : Container(
+                            padding: const EdgeInsets.all(10),
+                            width: MediaQuery.of(context).size.width,
+                            height: 255,
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (context, index) {
+                                final lightNovel = state.lightNovel[index];
+                                return InkWell(
+                                    borderRadius: BorderRadius.circular(10),
+                                    onTap: () => Navigator.of(context)
+                                            .push(MaterialPageRoute(
+                                          builder: (context) =>
+                                              DetailPage(id: lightNovel.malId),
+                                        )),
+                                    child: ComicCard(comic: lightNovel));
+                              },
+                              itemCount: state.lightNovel.length,
+                            ),
+                          ),
+                  ],
+                ),
               );
             }
-            return Container();
+            return const HomeShimmerLoading();
           },
         ),
       ),
     );
+  }
+}
+
+class HomeShimmerLoading extends StatelessWidget {
+  const HomeShimmerLoading({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      children: const [
+        SizedBox(
+          height: 10,
+        ),
+        RowTitleShimmerLoading(),
+        CardShimmerLoading(),
+        SizedBox(
+          height: 10,
+        ),
+        RowTitleShimmerLoading(),
+        CardShimmerLoading(),
+        SizedBox(
+          height: 10,
+        ),
+        RowTitleShimmerLoading(),
+        CardShimmerLoading(),
+      ],
+    );
+  }
+}
+
+class RowTitleShimmerLoading extends StatelessWidget {
+  const RowTitleShimmerLoading({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Shimmer.fromColors(
+            baseColor: Colors.grey.shade300,
+            highlightColor: Colors.grey.shade100,
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.3,
+              height: 27,
+              decoration: BoxDecoration(
+                  color: Colors.white, borderRadius: BorderRadius.circular(5)),
+            ),
+          ),
+          Shimmer.fromColors(
+            baseColor: Colors.grey.shade300,
+            highlightColor: Colors.grey.shade100,
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.2,
+              height: 27,
+              decoration: BoxDecoration(
+                  color: Colors.white, borderRadius: BorderRadius.circular(5)),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class CardShimmerLoading extends StatelessWidget {
+  const CardShimmerLoading({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        padding: const EdgeInsets.all(10),
+        width: MediaQuery.of(context).size.width,
+        height: 255,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          shrinkWrap: true,
+          itemBuilder: (context, index) {
+            return Shimmer.fromColors(
+              baseColor: Colors.grey.shade300,
+              highlightColor: Colors.grey.shade100,
+              child: Card(
+                child: Container(
+                  width: 160,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            );
+          },
+          itemCount: 3,
+        ));
   }
 }
 
