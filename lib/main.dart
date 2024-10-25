@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_komik/pages/home_page.dart';
+import 'package:flutter_komik/pages/navigation_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
     return const MaterialApp(
       title: "Necomic",
       debugShowCheckedModeBanner: false,
-      home: HomePage(),
+      home: NavigationPage(),
     );
   }
 }

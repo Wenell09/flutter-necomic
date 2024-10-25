@@ -450,9 +450,11 @@ class DetailPage extends StatelessWidget {
                             return const RecomShimmerLoading();
                           } else if (state is RecomLoaded) {
                             if (state.recommendations.isEmpty) {
-                              return const Text(
-                                "No Recommendations data for this comic",
-                                style: TextStyle(fontSize: 15),
+                              return const Center(
+                                child: Text(
+                                  "No Recommendations data for this comic",
+                                  style: TextStyle(fontSize: 15),
+                                ),
                               );
                             }
                             return Container(

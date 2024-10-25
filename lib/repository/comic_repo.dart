@@ -70,4 +70,22 @@ class ComicRepo {
       throw Exception("Error:$e");
     }
   }
+
+  Future<List<ComicModel>> getSearchComic(String search) async {
+    try {
+      final response =
+          await http.get(Uri.parse("$baseUrl/manga?q=$search&sfw=true"));
+      if (response.statusCode == 200) {
+        final List result = jsonDecode(response.body)["data"];
+        debugPrint("berhasil get komik:$search");
+        return result.map((e) => ComicModel.fromJson(e)).toList();
+      } else {
+        debugPrint("gagal get $search");
+        throw Exception("gagal get $search");
+      }
+    } catch (e) {
+      debugPrint("Error:$e");
+      throw Exception("Error:$e");
+    }
+  }
 }
