@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "784107854327",
+    "project_id": "necomic",
+    "storage_bucket": "necomic.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:784107854327:android:ea6bb5304a1dd547c8f6f2",
+        "android_client_info": {
+          "package_name": "com.example.flutter_komik"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "784107854327-e2ifjbnfdjnngon2ncaspoupfhtq1tpg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.flutter_komik",
+            "certificate_hash": "be293369aab5772cca7fc8851ed557c7965087d4"
+          }
+        },
+        {
+          "client_id": "784107854327-klpig5nlhqgemlk49m0643dudo8ng0ej.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBWQux5xJX2SB5L8W96ua-fe2UrfLSvpCw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "784107854327-klpig5nlhqgemlk49m0643dudo8ng0ej.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "784107854327-brbpupem8kjbro2j3iheb58n1jsfe2u8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.flutterKomik"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

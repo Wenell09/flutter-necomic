@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_komik/bloc/characters/chara_bloc.dart';
 import 'package:flutter_komik/bloc/detail_comic/detail_comic_bloc.dart';
 import 'package:flutter_komik/bloc/recommendations/recom_bloc.dart';
+import 'package:flutter_komik/bloc/theme/theme_bloc.dart';
 import 'package:flutter_komik/repository/comic_repo.dart';
 import 'package:intl/intl.dart';
 import 'package:readmore/readmore.dart';
@@ -33,525 +34,559 @@ class DetailPage extends StatelessWidget {
           if (state is DetailComicLoading) {
             return const ScaffoldShimmerLoading();
           } else if (state is DetailComicLoaded) {
-            return DefaultTabController(
-              length: 2,
-              child: Scaffold(
-                appBar: PreferredSize(
-                  preferredSize: const Size.fromHeight(310),
-                  child: AppBar(
-                    title: const Text(
-                      "Community",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    centerTitle: true,
-                    flexibleSpace: SafeArea(
-                      child: Padding(
-                        padding:
-                            const EdgeInsets.only(top: 55, left: 20, right: 20),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image.network(
-                                state.detailComic.images,
-                                fit: BoxFit.cover,
-                                width: 140,
-                                height: 200,
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    state.detailComic.englishTitle,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
+            return BlocBuilder<ThemeBloc, ThemeState>(
+              builder: (context, themeState) {
+                return DefaultTabController(
+                  length: 2,
+                  child: Scaffold(
+                    appBar: PreferredSize(
+                      preferredSize: const Size.fromHeight(310),
+                      child: AppBar(
+                        title: const Text(
+                          "Community",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        centerTitle: true,
+                        flexibleSpace: SafeArea(
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                                top: 55, left: 20, right: 20),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Image.network(
+                                    state.detailComic.images,
+                                    fit: BoxFit.cover,
+                                    width: 140,
+                                    height: 200,
                                   ),
-                                  Row(
+                                ),
+                                const SizedBox(
+                                  width: 20,
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      Container(
-                                        padding: const EdgeInsets.all(5),
-                                        decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.black),
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                          color: (state.detailComic.type ==
-                                                  "Manga")
-                                              ? Colors.blue
-                                              : (state.detailComic.type ==
-                                                      "Manhwa")
-                                                  ? Colors.red[700]
+                                      Text(
+                                        state.detailComic.englishTitle,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Row(
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.all(5),
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.black),
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                              color: (state.detailComic.type ==
+                                                      "Manga")
+                                                  ? Colors.blue
                                                   : (state.detailComic.type ==
-                                                          "Manhua")
-                                                      ? Colors.orange[700]
+                                                          "Manhwa")
+                                                      ? Colors.red[700]
                                                       : (state.detailComic
                                                                   .type ==
-                                                              "Novel")
-                                                          ? Colors.green[700]
-                                                          : Colors.purple[700],
-                                        ),
-                                        child: Text(
-                                          state.detailComic.type,
-                                          style: const TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white),
-                                        ),
-                                      ),
-                                      Flexible(
-                                        child: Text(
-                                          "  • ${formatMonth(state.detailComic.publishedWhen)}",
-                                          maxLines: 1,
-                                          style: const TextStyle(
-                                            fontSize: 15,
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    height: 3,
-                                  ),
-                                  Text(
-                                    "★ ${convertScoreToRating(state.detailComic.score)} Community Rating",
-                                    style: const TextStyle(
-                                      color: Colors.green,
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                  Text(
-                                    "${state.detailComic.members} Reading Members",
-                                    style: const TextStyle(
-                                      color: Colors.blue,
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    height: 40,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: Colors.blue,
-                                    ),
-                                    child: const Row(
-                                      children: [
-                                        Expanded(
-                                          flex: 1,
-                                          child: Icon(
-                                            Icons.bookmark,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                        Expanded(
-                                          flex: 3,
-                                          child: Text(
-                                            "Add Favorite",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                              fontSize: 15,
+                                                              "Manhua")
+                                                          ? Colors.orange[700]
+                                                          : (state.detailComic
+                                                                      .type ==
+                                                                  "Novel")
+                                                              ? Colors
+                                                                  .green[700]
+                                                              : Colors
+                                                                  .purple[700],
+                                            ),
+                                            child: Text(
+                                              state.detailComic.type,
+                                              style: const TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white),
                                             ),
                                           ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    bottom: const TabBar(
-                      labelStyle: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue,
-                      ),
-                      unselectedLabelStyle: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey,
-                      ),
-                      indicatorColor: Colors.blue,
-                      overlayColor: WidgetStatePropertyAll(Colors.transparent),
-                      tabs: [
-                        Tab(
-                          text: "Details",
-                        ),
-                        Tab(
-                          text: "Reviews",
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                body: TabBarView(children: [
-                  ListView(
-                    children: [
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ContainerDetail(
-                            iconData: Icons.leaderboard,
-                            title: "Rank",
-                            deskripsi: state.detailComic.rank.toString(),
-                            color: Colors.blue,
-                          ),
-                          ContainerDetail(
-                            iconData: Icons.star,
-                            title: "Score",
-                            deskripsi: "${state.detailComic.score}/10",
-                            color: Colors.grey,
-                          ),
-                          ContainerDetail(
-                            iconData: Icons.whatshot,
-                            title: "Popularity",
-                            deskripsi: state.detailComic.popularity.toString(),
-                            color: Colors.green,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      const Text(
-                        textAlign: TextAlign.center,
-                        "Details",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 17,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          padding: const EdgeInsets.all(13),
-                          width: MediaQuery.of(context).size.width,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              RowDetail(
-                                title: "Title English • ",
-                                value: state.detailComic.englishTitle,
-                              ),
-                              RowDetail(
-                                title: "Title Japanase • ",
-                                value: state.detailComic.japanTitle,
-                              ),
-                              RowDetail(
-                                title: "Type • ",
-                                value: state.detailComic.type,
-                              ),
-                              RowDetail(
-                                title: "Chapters • ",
-                                value: state.detailComic.chapters.toString(),
-                              ),
-                              RowDetail(
-                                title: "Volumes • ",
-                                value: state.detailComic.volumes.toString(),
-                              ),
-                              RowDetail(
-                                title: "Status • ",
-                                value: state.detailComic.status,
-                              ),
-                              RowDetail(
-                                title: "Publish Date • ",
-                                value:
-                                    formatDate(state.detailComic.publishedWhen),
-                              ),
-                              RowDetail(
-                                title: "Publish Date Completed • ",
-                                value:
-                                    (state.detailComic.publishedUntil.isEmpty)
-                                        ? "?"
-                                        : formatDate(
-                                            state.detailComic.publishedUntil),
-                              ),
-                              RowDetail(
-                                title: "Authors • ",
-                                value: state.detailComic.authors[0]["name"],
-                              ),
-                              RowDetail(
-                                title: "Genres • ",
-                                value: state.detailComic.genres
-                                    .map((genre) => genre.name)
-                                    .join(', '),
-                              ),
-                              RowDetail(
-                                title: "Favorites • ",
-                                value: "${state.detailComic.favorites} Person",
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              ReadMoreText(
-                                state.detailComic.synopsis,
-                                style: const TextStyle(fontSize: 15),
-                                trimMode: TrimMode.Line,
-                                trimLines: 8,
-                                colorClickableText: Colors.blue,
-                                trimCollapsedText: 'Show more',
-                                trimExpandedText: 'Show less',
-                                lessStyle: const TextStyle(
-                                  fontSize: 15,
-                                  color: Colors.blue,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                moreStyle: const TextStyle(
-                                  fontSize: 15,
-                                  color: Colors.blue,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      const Text(
-                        textAlign: TextAlign.center,
-                        "Characters",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 17,
-                        ),
-                      ),
-                      BlocBuilder<CharaBloc, CharaState>(
-                        builder: (context, state) {
-                          if (state is CharaLoading) {
-                            return const CharaShimmerLoading();
-                          } else if (state is CharaLoaded) {
-                            if (state.characters.isEmpty) {
-                              return const Center(
-                                child: Text(
-                                  "No Character data for this comic",
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                  ),
-                                ),
-                              );
-                            }
-                            return Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 10),
-                              width: MediaQuery.of(context).size.width,
-                              height: 170,
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                scrollDirection: Axis.horizontal,
-                                physics: const ScrollPhysics(),
-                                itemBuilder: (context, index) {
-                                  final characters = state.characters[index];
-                                  return Card(
-                                    child: Container(
-                                      margin: const EdgeInsets.all(0),
-                                      width: MediaQuery.of(context).size.width *
-                                          0.3,
-                                      child: Stack(
-                                        children: [
-                                          ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            child: Image.network(
-                                              errorBuilder: (context, error,
-                                                      stackTrace) =>
-                                                  const Center(
-                                                child:
-                                                    CircularProgressIndicator(),
+                                          Flexible(
+                                            child: Text(
+                                              "  • ${formatMonth(state.detailComic.publishedWhen)}",
+                                              maxLines: 1,
+                                              style: const TextStyle(
+                                                fontSize: 15,
+                                                color: Colors.grey,
                                               ),
-                                              characters.images,
-                                              width: MediaQuery.of(context)
-                                                  .size
-                                                  .width,
-                                              fit: BoxFit.cover,
                                             ),
                                           ),
-                                          Align(
-                                            alignment: Alignment.bottomCenter,
-                                            child: Container(
-                                              width: MediaQuery.of(context)
-                                                  .size
-                                                  .width,
-                                              height: 30,
-                                              decoration: const BoxDecoration(
-                                                color: Colors.black54,
-                                                borderRadius: BorderRadius.only(
-                                                  bottomLeft:
-                                                      Radius.circular(10),
-                                                  bottomRight:
-                                                      Radius.circular(10),
-                                                ),
-                                              ),
-                                              child: Center(
-                                                child: Text(
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  textAlign: TextAlign.center,
-                                                  characters.name,
-                                                  style: const TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          )
                                         ],
                                       ),
-                                    ),
-                                  );
-                                },
-                                itemCount: state.characters.length,
-                              ),
-                            );
-                          } else {
-                            return const CharaShimmerLoading();
-                          }
-                        },
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      const Text(
-                        textAlign: TextAlign.center,
-                        "Recommendations",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 17,
-                        ),
-                      ),
-                      BlocBuilder<RecomBloc, RecomState>(
-                        builder: (context, state) {
-                          if (state is RecomLoading) {
-                            return const RecomShimmerLoading();
-                          } else if (state is RecomLoaded) {
-                            if (state.recommendations.isEmpty) {
-                              return const Center(
-                                child: Text(
-                                  "No Recommendations data for this comic",
-                                  style: TextStyle(fontSize: 15),
-                                ),
-                              );
-                            }
-                            return Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 10),
-                              width: MediaQuery.of(context).size.width,
-                              height: 255,
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                physics: const ScrollPhysics(),
-                                shrinkWrap: true,
-                                itemBuilder: (context, index) {
-                                  final recom = state.recommendations[index];
-                                  return InkWell(
-                                    borderRadius: BorderRadius.circular(10),
-                                    onTap: () => Navigator.of(context)
-                                        .push(MaterialPageRoute(
-                                      builder: (context) =>
-                                          DetailPage(id: recom.malId),
-                                    )),
-                                    child: Card(
-                                      child: Container(
-                                        margin: const EdgeInsets.all(0),
+                                      const SizedBox(
+                                        height: 3,
+                                      ),
+                                      Text(
+                                        "★ ${convertScoreToRating(state.detailComic.score)} Community Rating",
+                                        style: const TextStyle(
+                                          color: Colors.green,
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                      Text(
+                                        "${state.detailComic.members} Reading Members",
+                                        style: const TextStyle(
+                                          color: Colors.blue,
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Container(
                                         width:
-                                            MediaQuery.of(context).size.width *
-                                                0.45,
-                                        child: Stack(
+                                            MediaQuery.of(context).size.width,
+                                        height: 40,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          color: Colors.blue,
+                                        ),
+                                        child: const Row(
                                           children: [
-                                            ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              child: Image.network(
-                                                errorBuilder: (context, error,
-                                                        stackTrace) =>
-                                                    const Center(
-                                                  child:
-                                                      CircularProgressIndicator(),
-                                                ),
-                                                recom.images,
-                                                width: MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                                height: 255,
-                                                fit: BoxFit.cover,
+                                            Expanded(
+                                              flex: 1,
+                                              child: Icon(
+                                                Icons.bookmark,
+                                                color: Colors.white,
                                               ),
                                             ),
-                                            Align(
-                                              alignment: Alignment.bottomCenter,
-                                              child: Container(
-                                                width: MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                                height: 30,
-                                                decoration: const BoxDecoration(
-                                                  color: Colors.black54,
-                                                  borderRadius:
-                                                      BorderRadius.only(
-                                                    bottomLeft:
-                                                        Radius.circular(10),
-                                                    bottomRight:
-                                                        Radius.circular(10),
-                                                  ),
-                                                ),
-                                                child: Center(
-                                                  child: Text(
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    textAlign: TextAlign.center,
-                                                    recom.title,
-                                                    style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
+                                            Expanded(
+                                              flex: 3,
+                                              child: Text(
+                                                "Add Favorite",
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                  fontSize: 15,
                                                 ),
                                               ),
                                             )
                                           ],
                                         ),
                                       ),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                        bottom: const TabBar(
+                          labelStyle: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue,
+                          ),
+                          unselectedLabelStyle: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey,
+                          ),
+                          indicatorColor: Colors.blue,
+                          overlayColor:
+                              WidgetStatePropertyAll(Colors.transparent),
+                          tabs: [
+                            Tab(
+                              text: "Details",
+                            ),
+                            Tab(
+                              text: "Reviews",
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    body: TabBarView(children: [
+                      ListView(
+                        children: [
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ContainerDetail(
+                                iconData: Icons.leaderboard,
+                                title: "Rank",
+                                deskripsi: state.detailComic.rank.toString(),
+                                color: Colors.blue,
+                              ),
+                              ContainerDetail(
+                                iconData: Icons.star,
+                                title: "Score",
+                                deskripsi: "${state.detailComic.score}/10",
+                                color: (themeState.isDark)
+                                    ? Colors.grey[600]!
+                                    : Colors.grey,
+                              ),
+                              ContainerDetail(
+                                iconData: Icons.whatshot,
+                                title: "Popularity",
+                                deskripsi:
+                                    state.detailComic.popularity.toString(),
+                                color: Colors.green,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          const Text(
+                            textAlign: TextAlign.center,
+                            "Details",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 17,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              padding: const EdgeInsets.all(13),
+                              width: MediaQuery.of(context).size.width,
+                              decoration: BoxDecoration(
+                                color: (themeState.isDark)
+                                    ? Colors.grey[800]
+                                    : Colors.grey[200],
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  RowDetail(
+                                    title: "Title English • ",
+                                    value: state.detailComic.englishTitle,
+                                  ),
+                                  RowDetail(
+                                    title: "Title Japanase • ",
+                                    value: state.detailComic.japanTitle,
+                                  ),
+                                  RowDetail(
+                                    title: "Type • ",
+                                    value: state.detailComic.type,
+                                  ),
+                                  RowDetail(
+                                    title: "Chapters • ",
+                                    value:
+                                        state.detailComic.chapters.toString(),
+                                  ),
+                                  RowDetail(
+                                    title: "Volumes • ",
+                                    value: state.detailComic.volumes.toString(),
+                                  ),
+                                  RowDetail(
+                                    title: "Status • ",
+                                    value: state.detailComic.status,
+                                  ),
+                                  RowDetail(
+                                    title: "Publish Date • ",
+                                    value: formatDate(
+                                        state.detailComic.publishedWhen),
+                                  ),
+                                  RowDetail(
+                                    title: "Publish Date Completed • ",
+                                    value: (state
+                                            .detailComic.publishedUntil.isEmpty)
+                                        ? "?"
+                                        : formatDate(
+                                            state.detailComic.publishedUntil),
+                                  ),
+                                  RowDetail(
+                                    title: "Authors • ",
+                                    value: state.detailComic.authors[0]["name"],
+                                  ),
+                                  RowDetail(
+                                    title: "Genres • ",
+                                    value: state.detailComic.genres
+                                        .map((genre) => genre.name)
+                                        .join(', '),
+                                  ),
+                                  RowDetail(
+                                    title: "Favorites • ",
+                                    value:
+                                        "${state.detailComic.favorites} Person",
+                                  ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  ReadMoreText(
+                                    state.detailComic.synopsis,
+                                    style: const TextStyle(fontSize: 15),
+                                    trimMode: TrimMode.Line,
+                                    trimLines: 8,
+                                    colorClickableText: Colors.blue,
+                                    trimCollapsedText: 'Show more',
+                                    trimExpandedText: 'Show less',
+                                    lessStyle: const TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.blue,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    moreStyle: const TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.blue,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          const Text(
+                            textAlign: TextAlign.center,
+                            "Characters",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 17,
+                            ),
+                          ),
+                          BlocBuilder<CharaBloc, CharaState>(
+                            builder: (context, state) {
+                              if (state is CharaLoading) {
+                                return const CharaShimmerLoading();
+                              } else if (state is CharaLoaded) {
+                                if (state.characters.isEmpty) {
+                                  return const Center(
+                                    child: Text(
+                                      "No Character data for this comic",
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                      ),
                                     ),
                                   );
-                                },
-                                itemCount: state.recommendations.length,
-                              ),
-                            );
-                          }
-                          return const RecomShimmerLoading();
-                        },
-                      )
-                    ],
+                                }
+                                return Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10),
+                                  width: MediaQuery.of(context).size.width,
+                                  height: 170,
+                                  child: ListView.builder(
+                                    shrinkWrap: true,
+                                    scrollDirection: Axis.horizontal,
+                                    physics: const ScrollPhysics(),
+                                    itemBuilder: (context, index) {
+                                      final characters =
+                                          state.characters[index];
+                                      return Card(
+                                        child: Container(
+                                          margin: const EdgeInsets.all(0),
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.3,
+                                          child: Stack(
+                                            children: [
+                                              ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                child: Image.network(
+                                                  errorBuilder: (context, error,
+                                                          stackTrace) =>
+                                                      const Center(
+                                                    child:
+                                                        CircularProgressIndicator(),
+                                                  ),
+                                                  characters.images,
+                                                  width: MediaQuery.of(context)
+                                                      .size
+                                                      .width,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                              Align(
+                                                alignment:
+                                                    Alignment.bottomCenter,
+                                                child: Container(
+                                                  width: MediaQuery.of(context)
+                                                      .size
+                                                      .width,
+                                                  height: 30,
+                                                  decoration:
+                                                      const BoxDecoration(
+                                                    color: Colors.black54,
+                                                    borderRadius:
+                                                        BorderRadius.only(
+                                                      bottomLeft:
+                                                          Radius.circular(10),
+                                                      bottomRight:
+                                                          Radius.circular(10),
+                                                    ),
+                                                  ),
+                                                  child: Center(
+                                                    child: Text(
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      characters.name,
+                                                      style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    itemCount: state.characters.length,
+                                  ),
+                                );
+                              } else {
+                                return const CharaShimmerLoading();
+                              }
+                            },
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          const Text(
+                            textAlign: TextAlign.center,
+                            "Recommendations",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 17,
+                            ),
+                          ),
+                          BlocBuilder<RecomBloc, RecomState>(
+                            builder: (context, state) {
+                              if (state is RecomLoading) {
+                                return const RecomShimmerLoading();
+                              } else if (state is RecomLoaded) {
+                                if (state.recommendations.isEmpty) {
+                                  return const Center(
+                                    child: Text(
+                                      "No Recommendations data for this comic",
+                                      style: TextStyle(fontSize: 15),
+                                    ),
+                                  );
+                                }
+                                return Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10),
+                                  width: MediaQuery.of(context).size.width,
+                                  height: 255,
+                                  child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    physics: const ScrollPhysics(),
+                                    shrinkWrap: true,
+                                    itemBuilder: (context, index) {
+                                      final recom =
+                                          state.recommendations[index];
+                                      return InkWell(
+                                        borderRadius: BorderRadius.circular(10),
+                                        onTap: () => Navigator.of(context)
+                                            .push(MaterialPageRoute(
+                                          builder: (context) =>
+                                              DetailPage(id: recom.malId),
+                                        )),
+                                        child: Card(
+                                          child: Container(
+                                            margin: const EdgeInsets.all(0),
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.45,
+                                            child: Stack(
+                                              children: [
+                                                ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  child: Image.network(
+                                                    errorBuilder: (context,
+                                                            error,
+                                                            stackTrace) =>
+                                                        const Center(
+                                                      child:
+                                                          CircularProgressIndicator(),
+                                                    ),
+                                                    recom.images,
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                            .size
+                                                            .width,
+                                                    height: 255,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                                Align(
+                                                  alignment:
+                                                      Alignment.bottomCenter,
+                                                  child: Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                            .size
+                                                            .width,
+                                                    height: 30,
+                                                    decoration:
+                                                        const BoxDecoration(
+                                                      color: Colors.black54,
+                                                      borderRadius:
+                                                          BorderRadius.only(
+                                                        bottomLeft:
+                                                            Radius.circular(10),
+                                                        bottomRight:
+                                                            Radius.circular(10),
+                                                      ),
+                                                    ),
+                                                    child: Center(
+                                                      child: Text(
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        recom.title,
+                                                        style: const TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.white,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    itemCount: state.recommendations.length,
+                                  ),
+                                );
+                              }
+                              return const RecomShimmerLoading();
+                            },
+                          )
+                        ],
+                      ),
+                      const Text("INi review")
+                    ]),
                   ),
-                  const Text("INi review")
-                ]),
-              ),
+                );
+              },
             );
           }
           return const ScaffoldShimmerLoading();

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_komik/bloc/filter_comic/filter_comic_bloc.dart';
 import 'package:flutter_komik/bloc/select_filter/select_filter_bloc.dart';
+import 'package:flutter_komik/bloc/theme/theme_bloc.dart';
 import 'package:flutter_komik/pages/detail_page.dart';
 import 'package:flutter_komik/repository/comic_repo.dart';
 import 'package:shimmer/shimmer.dart';
@@ -41,67 +42,82 @@ class FilterPage extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 5),
                   child: BlocBuilder<SelectFilterBloc, SelectFilterState>(
                     builder: (context, state) {
-                      return InkWell(
-                        borderRadius: BorderRadius.circular(20),
-                        onTap: () {
-                          context.read<SelectFilterBloc>().add(CallSelect(
-                                currentPage: index,
-                                filterSelect: (index == 0)
-                                    ? ""
-                                    : (index == 1)
-                                        ? "bypopularity"
-                                        : (index == 2)
-                                            ? "favorite"
-                                            : (index == 3)
-                                                ? "upcoming"
-                                                : "publishing",
-                              ));
-                          context.read<FilterComicBloc>().add(
-                                GetFilterComic(
-                                  query: title,
-                                  filter: (index == 0)
-                                      ? ""
+                      return BlocBuilder<ThemeBloc, ThemeState>(
+                        builder: (context, themeState) {
+                          return InkWell(
+                            borderRadius: BorderRadius.circular(20),
+                            onTap: () {
+                              context.read<SelectFilterBloc>().add(CallSelect(
+                                    currentPage: index,
+                                    filterSelect: (index == 0)
+                                        ? ""
+                                        : (index == 1)
+                                            ? "bypopularity"
+                                            : (index == 2)
+                                                ? "favorite"
+                                                : (index == 3)
+                                                    ? "upcoming"
+                                                    : "publishing",
+                                  ));
+                              context.read<FilterComicBloc>().add(
+                                    GetFilterComic(
+                                      query: title,
+                                      filter: (index == 0)
+                                          ? ""
+                                          : (index == 1)
+                                              ? "bypopularity"
+                                              : (index == 2)
+                                                  ? "favorite"
+                                                  : (index == 3)
+                                                      ? "upcoming"
+                                                      : "publishing",
+                                      page: 1,
+                                    ),
+                                  );
+                            },
+                            child: Container(
+                              width: 100,
+                              decoration: BoxDecoration(
+                                color: (state.currentPage == index)
+                                    ? (themeState.isDark)
+                                        ? Colors.black
+                                        : Colors.white
+                                    : (themeState.isDark)
+                                        ? Colors.white
+                                        : Colors.black,
+                                border: Border.all(
+                                    color: (themeState.isDark)
+                                        ? Colors.white
+                                        : Colors.black),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  (index == 0)
+                                      ? "All"
                                       : (index == 1)
-                                          ? "bypopularity"
+                                          ? "Popular"
                                           : (index == 2)
                                               ? "favorite"
                                               : (index == 3)
-                                                  ? "upcoming"
-                                                  : "publishing",
-                                  page: 1,
+                                                  ? "Upcoming"
+                                                  : "Publishing",
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    color: (state.currentPage == index)
+                                        ? (themeState.isDark)
+                                            ? Colors.white
+                                            : Colors.black
+                                        : (themeState.isDark)
+                                            ? Colors.black
+                                            : Colors.white,
+                                  ),
                                 ),
-                              );
-                        },
-                        child: Container(
-                          width: 100,
-                          decoration: BoxDecoration(
-                            color: (state.currentPage == index)
-                                ? Colors.white
-                                : Colors.black,
-                            border: Border.all(color: Colors.black),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Center(
-                            child: Text(
-                              (index == 0)
-                                  ? "All"
-                                  : (index == 1)
-                                      ? "Popular"
-                                      : (index == 2)
-                                          ? "favorite"
-                                          : (index == 3)
-                                              ? "Upcoming"
-                                              : "Publishing",
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color: (state.currentPage == index)
-                                    ? Colors.black
-                                    : Colors.white,
                               ),
                             ),
-                          ),
-                        ),
+                          );
+                        },
                       );
                     },
                   ),
@@ -122,31 +138,39 @@ class FilterPage extends StatelessWidget {
                     }
                     return BlocBuilder<SelectFilterBloc, SelectFilterState>(
                       builder: (context, selectFilterState) {
-                        return InkWell(
-                          onTap: () {
-                            int currentPage = (state as FilterComicLoaded)
-                                .paginationcomic
-                                .currentPage;
-                            context.read<FilterComicBloc>().add(
-                                  GetFilterComic(
-                                    query: title,
-                                    filter: selectFilterState.filterSelect,
-                                    page: currentPage - 1,
-                                  ),
-                                );
+                        return BlocBuilder<ThemeBloc, ThemeState>(
+                          builder: (context, themeState) {
+                            return InkWell(
+                              onTap: () {
+                                int currentPage = (state as FilterComicLoaded)
+                                    .paginationcomic
+                                    .currentPage;
+                                context.read<FilterComicBloc>().add(
+                                      GetFilterComic(
+                                        query: title,
+                                        filter: selectFilterState.filterSelect,
+                                        page: currentPage - 1,
+                                      ),
+                                    );
+                              },
+                              child: Container(
+                                width: 35,
+                                height: 35,
+                                decoration: BoxDecoration(
+                                  color: (themeState.isDark)
+                                      ? Colors.white
+                                      : Colors.black,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Icon(
+                                  Icons.arrow_back_ios_outlined,
+                                  color: (themeState.isDark)
+                                      ? Colors.black
+                                      : Colors.white,
+                                ),
+                              ),
+                            );
                           },
-                          child: Container(
-                            width: 35,
-                            height: 35,
-                            decoration: BoxDecoration(
-                              color: Colors.black,
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: const Icon(
-                              Icons.arrow_back_ios_outlined,
-                              color: Colors.white,
-                            ),
-                          ),
                         );
                       },
                     );
@@ -203,31 +227,39 @@ class FilterPage extends StatelessWidget {
                     }
                     return BlocBuilder<SelectFilterBloc, SelectFilterState>(
                       builder: (context, selectFilterState) {
-                        return InkWell(
-                          onTap: () {
-                            int currentPage = (state as FilterComicLoaded)
-                                .paginationcomic
-                                .currentPage;
-                            context.read<FilterComicBloc>().add(
-                                  GetFilterComic(
-                                    query: title,
-                                    filter: selectFilterState.filterSelect,
-                                    page: currentPage + 1,
-                                  ),
-                                );
+                        return BlocBuilder<ThemeBloc, ThemeState>(
+                          builder: (context, themeState) {
+                            return InkWell(
+                              onTap: () {
+                                int currentPage = (state as FilterComicLoaded)
+                                    .paginationcomic
+                                    .currentPage;
+                                context.read<FilterComicBloc>().add(
+                                      GetFilterComic(
+                                        query: title,
+                                        filter: selectFilterState.filterSelect,
+                                        page: currentPage + 1,
+                                      ),
+                                    );
+                              },
+                              child: Container(
+                                width: 35,
+                                height: 35,
+                                decoration: BoxDecoration(
+                                  color: (themeState.isDark)
+                                      ? Colors.white
+                                      : Colors.black,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Icon(
+                                  Icons.arrow_forward_ios_outlined,
+                                  color: (themeState.isDark)
+                                      ? Colors.black
+                                      : Colors.white,
+                                ),
+                              ),
+                            );
                           },
-                          child: Container(
-                            width: 35,
-                            height: 35,
-                            decoration: BoxDecoration(
-                              color: Colors.black,
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: const Icon(
-                              Icons.arrow_forward_ios_outlined,
-                              color: Colors.white,
-                            ),
-                          ),
                         );
                       },
                     );
