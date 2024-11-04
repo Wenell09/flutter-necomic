@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_komik/bloc/characters/chara_bloc.dart';
 import 'package:flutter_komik/bloc/detail_comic/detail_comic_bloc.dart';
+import 'package:flutter_komik/bloc/favorites/favorites_bloc.dart';
 import 'package:flutter_komik/bloc/recommendations/recom_bloc.dart';
+import 'package:flutter_komik/bloc/save_userId/save_user_id_bloc.dart';
 import 'package:flutter_komik/bloc/theme/theme_bloc.dart';
 import 'package:flutter_komik/repository/comic_repo.dart';
 import 'package:intl/intl.dart';
@@ -144,37 +146,194 @@ class DetailPage extends StatelessWidget {
                                         ),
                                       ),
                                       const SizedBox(height: 10),
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        height: 40,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          color: Colors.blue,
-                                        ),
-                                        child: const Row(
-                                          children: [
-                                            Expanded(
-                                              flex: 1,
-                                              child: Icon(
-                                                Icons.bookmark,
-                                                color: Colors.white,
+                                      BlocBuilder<SaveUserIdBloc,
+                                          SaveUserIdState>(
+                                        builder: (context, saveState) {
+                                          if (saveState is SaveUserLoaded) {
+                                            return BlocListener<FavoritesBloc,
+                                                FavoritesState>(
+                                              listener: (context, state) {
+                                                if (state
+                                                        is FavoritesAddSuccess ||
+                                                    state
+                                                        is FavoritesDeleteSuccess) {
+                                                  context
+                                                      .read<FavoritesBloc>()
+                                                      .add(GetFavorites(
+                                                          userId: saveState
+                                                              .userId));
+                                                }
+                                              },
+                                              child: BlocBuilder<FavoritesBloc,
+                                                  FavoritesState>(
+                                                builder:
+                                                    (context, favoriteState) {
+                                                  if (favoriteState
+                                                      is FavoritesLoaded) {
+                                                    final isFavorite =
+                                                        favoriteState
+                                                            .favorites
+                                                            .any((data) =>
+                                                                data.userId ==
+                                                                    saveState
+                                                                        .userId &&
+                                                                data.malId ==
+                                                                    id);
+                                                    return GestureDetector(
+                                                      onTap: () {
+                                                        if (isFavorite) {
+                                                          context
+                                                              .read<
+                                                                  FavoritesBloc>()
+                                                              .add(
+                                                                DeleteFavorites(
+                                                                  userId:
+                                                                      saveState
+                                                                          .userId,
+                                                                  malId: id,
+                                                                ),
+                                                              );
+                                                          ScaffoldMessenger.of(
+                                                                  context)
+                                                              .showSnackBar(
+                                                            const SnackBar(
+                                                              duration:
+                                                                  Duration(
+                                                                seconds: 1,
+                                                              ),
+                                                              content: Text(
+                                                                "Success delete from my favorite comics!",
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 16,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          );
+                                                        } else {
+                                                          context
+                                                              .read<
+                                                                  FavoritesBloc>()
+                                                              .add(
+                                                                AddFavorites(
+                                                                  userId:
+                                                                      saveState
+                                                                          .userId,
+                                                                  malId: id,
+                                                                  title: state
+                                                                      .detailComic
+                                                                      .englishTitle,
+                                                                  images: state
+                                                                      .detailComic
+                                                                      .images,
+                                                                  type: state
+                                                                      .detailComic
+                                                                      .type,
+                                                                  publishedWhen: state
+                                                                      .detailComic
+                                                                      .publishedWhen,
+                                                                ),
+                                                              );
+                                                          ScaffoldMessenger.of(
+                                                                  context)
+                                                              .showSnackBar(
+                                                            const SnackBar(
+                                                              duration:
+                                                                  Duration(
+                                                                seconds: 1,
+                                                              ),
+                                                              content: Text(
+                                                                "Success add to my favorite comics!",
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 16,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          );
+                                                        }
+                                                      },
+                                                      child: FavoriteContainer(
+                                                        color: (isFavorite)
+                                                            ? Colors.green
+                                                            : Colors.blue,
+                                                        text: (isFavorite)
+                                                            ? "Delete Favorite"
+                                                            : "Add Favorite",
+                                                      ),
+                                                    );
+                                                  }
+                                                  return GestureDetector(
+                                                    onTap: () {
+                                                      context
+                                                          .read<FavoritesBloc>()
+                                                          .add(AddFavorites(
+                                                            userId: saveState
+                                                                .userId,
+                                                            malId: id,
+                                                            title: state
+                                                                .detailComic
+                                                                .englishTitle,
+                                                            images: state
+                                                                .detailComic
+                                                                .images,
+                                                            type: state
+                                                                .detailComic
+                                                                .type,
+                                                            publishedWhen: state
+                                                                .detailComic
+                                                                .publishedWhen,
+                                                          ));
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(
+                                                        const SnackBar(
+                                                          duration: Duration(
+                                                            seconds: 1,
+                                                          ),
+                                                          content: Text(
+                                                            "Success add to my favorite comics!",
+                                                            style: TextStyle(
+                                                              fontSize: 16,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                    child:
+                                                        const FavoriteContainer(
+                                                            text:
+                                                                "Add Favorite",
+                                                            color: Colors.blue),
+                                                  );
+                                                },
                                               ),
-                                            ),
-                                            Expanded(
-                                              flex: 3,
-                                              child: Text(
-                                                "Add Favorite",
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                  fontSize: 15,
+                                            );
+                                          }
+                                          return GestureDetector(
+                                            onTap: () => showDialog(
+                                              context: context,
+                                              builder: (context) => AlertDialog(
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                                content: const Text(
+                                                  "You must Login!",
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.bold),
                                                 ),
                                               ),
-                                            )
-                                          ],
-                                        ),
+                                            ),
+                                            child: const FavoriteContainer(
+                                              color: Colors.blue,
+                                              text: "Add Favorite",
+                                            ),
+                                          );
+                                        },
                                       ),
                                     ],
                                   ),
@@ -591,6 +750,50 @@ class DetailPage extends StatelessWidget {
           }
           return const ScaffoldShimmerLoading();
         },
+      ),
+    );
+  }
+}
+
+class FavoriteContainer extends StatelessWidget {
+  final String text;
+  final Color color;
+  const FavoriteContainer({
+    super.key,
+    required this.text,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: 40,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: color,
+      ),
+      child: Row(
+        children: [
+          const Expanded(
+            flex: 1,
+            child: Icon(
+              Icons.bookmark,
+              color: Colors.white,
+            ),
+          ),
+          Expanded(
+            flex: 3,
+            child: Text(
+              text,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                fontSize: 15,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
