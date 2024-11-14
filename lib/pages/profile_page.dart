@@ -112,7 +112,7 @@ class ProfilePage extends StatelessWidget {
                               color: Colors.blue,
                             ),
                             title: Text(
-                              "My favorite comics",
+                              "Favorite comics",
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -168,6 +168,9 @@ class ProfilePage extends StatelessWidget {
                                         context
                                             .read<SaveUserIdBloc>()
                                             .add(SaveUserId(userId: ""));
+                                        context
+                                            .read<UserBloc>()
+                                            .add(GetUser(uid: ""));
                                         Navigator.of(context).pop();
                                       },
                                       child: const Text(

@@ -13,7 +13,8 @@ class FavoritesRepo {
           .orderBy("created_at")
           .get();
       if (favorites.docs.isNotEmpty) {
-        debugPrint("Data favorites: ${favorites.docs.length}");
+        debugPrint(
+            "Data favorites: ${favorites.docs.map((doc) => doc.data()).toList()}");
         return favorites.docs
             .map((e) => FavoriteModel.fromJson(e.data()))
             .toList();
@@ -67,6 +68,5 @@ class FavoritesRepo {
       debugPrint("Menghapus dokumen dengan ID: ${doc.id}");
       await doc.reference.delete();
     }
-    debugPrint("Berhasil menghapus favorites");
   }
 }

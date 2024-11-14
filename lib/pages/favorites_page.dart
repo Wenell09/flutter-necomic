@@ -167,7 +167,7 @@ class FavoritesPage extends StatelessWidget {
             appBar: AppBar(
               centerTitle: true,
               title: const Text(
-                "My Favorite Comics",
+                "Favorite Comics",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
