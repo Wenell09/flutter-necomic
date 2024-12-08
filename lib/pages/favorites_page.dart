@@ -139,10 +139,12 @@ class FavoritesPage extends StatelessWidget {
                                             const SizedBox(
                                               width: 5,
                                             ),
-                                            Text(
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                              favorites.favoriteDate,
+                                            Flexible(
+                                              child: Text(
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                                favorites.favoriteDate,
+                                              ),
                                             ),
                                           ],
                                         ),

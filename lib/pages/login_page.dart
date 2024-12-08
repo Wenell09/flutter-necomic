@@ -16,6 +16,17 @@ class LoginPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.asset(
+                "assets/images/logo-necomic.png",
+                width: 150,
+                height: 150,
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
             const Text(
               "Login Necomic",
               style: TextStyle(

@@ -12,11 +12,28 @@ class SplashPage extends StatelessWidget {
         () => Navigator.of(context).pushReplacement(MaterialPageRoute(
               builder: (context) => const NavigationPage(),
             )));
-    return const Scaffold(
+    return Scaffold(
+      backgroundColor: Colors.lightBlueAccent,
       body: Center(
-        child: Text(
-          "WELCOME TO NECOMIC",
-          style: TextStyle(fontSize: 20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.asset(
+                "assets/images/logo-necomic.png",
+                width: 200,
+                height: 200,
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            const Text(
+              "Welcome to necomic",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+          ],
         ),
       ),
     );
